@@ -85,7 +85,7 @@ Table of Contents
            3.2.2.1.11.  QuitRoom  . . . . . . . . . . . . . . . . . .  9
            3.2.2.1.12.  QuitRoom Response . . . . . . . . . . . . . .  9
          3.2.2.2.  Data Messages  . . . . . . . . . . . . . . . . . .  9
-     3.3.  Message Exchange Example . . . . . . . . . . . . . . . . . 10
+     3.3.  Message Exchange Examples  . . . . . . . . . . . . . . . . 10
        3.3.1.  Create and Destroy a Chatting Room . . . . . . . . . . 10
        3.3.2.  Join and Quit from a Chatting Room . . . . . . . . . . 11
    4.  Test Cases . . . . . . . . . . . . . . . . . . . . . . . . . . 12
@@ -531,7 +531,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    +---------------------------------------------------------------+ 
                     The Format of The Payload 
 
-3.3.  Message Exchange Example
+3.3.  Message Exchange Examples
 
    This section describes two examples to explain message exchange using
    MPCRP.
