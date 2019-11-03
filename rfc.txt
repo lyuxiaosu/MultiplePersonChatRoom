@@ -366,7 +366,6 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    and not sent another JoinRoom request with the same room ID to the
    server. The duplicate message is determined by room ID.
 
-
 3.2.2.1.7.  GetUserList
 
    GetUserList command is sent from the client to the server to request
@@ -386,6 +385,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    payload consists of the room ID followed a string of a JSON array.
    The room ID and the JSON string are separated by a colon.
 
+   If the room ID exists, the server SHOULD get all usernames from that
  
 
 
@@ -394,7 +394,6 @@ Lyu                           Experimental                      [Page 7]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   If the room ID exists, the server SHOULD get all usernames from that
    chatting room and check if the requesting client is also in the user
    list. If the requesting client is in the user list, the server SHOULD
    reply a JSON array of all usernames to the client. If the room ID
@@ -442,15 +441,13 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    and remove all users in that chatting room. Finally, the server
    SHOULD reply a success response to the client. If the room ID does
    not exist, or the requesting client is not the user who created the
+   chatting room, a failure response SHOULD be sent to the client.
  
 
 
 Lyu                           Experimental                      [Page 8]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
-
-
-   chatting room, a failure response SHOULD be sent to the client.
 
 
 3.2.2.1.11.  QuitRoom 
@@ -498,6 +495,9 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    first 1 byte is the length of the room ID, the second part is the
    room ID, and the third part is the string of the text message. The
    format of the subsequence payload is the following:
+
+
+   0                   1                   2                     3
  
 
 
@@ -506,7 +506,6 @@ Lyu                           Experimental                      [Page 9]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   0                   1                   2                     3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +---------------+-----------------------------------------------+
    |The Length of  |          Room ID                              |
@@ -543,6 +542,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    chatting room. After a chatting room is created, other chatting users
    can join this chatting room. If the chatting room is destroyed by the
    creator, all users in that chatting room will be removed.
+
 
 
 
