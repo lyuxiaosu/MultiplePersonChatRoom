@@ -62,7 +62,6 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    described in the Simplified BSD License.
 
 
-
 Table of Contents
 
    1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
@@ -72,7 +71,7 @@ Table of Contents
      3.2.  MPCRP Messages . . . . . . . . . . . . . . . . . . . . . .  4
        3.2.1.  MPCRP Message Format . . . . . . . . . . . . . . . . .  4
        3.2.2.  Types of Messages  . . . . . . . . . . . . . . . . . .  4
-         3.2.2.1.  Command Messages . . . . . . . . . . . . . . . . .  5
+         3.2.2.1.  Command Messages . . . . . . . . . . . . . . . . .  4
            3.2.2.1.1.  SetUserName  . . . . . . . . . . . . . . . . .  5
            3.2.2.1.2.  SetUserName Response . . . . . . . . . . . . .  5
            3.2.2.1.3.  CreateRoom . . . . . . . . . . . . . . . . . .  5
@@ -106,15 +105,13 @@ Table of Contents
    6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 14
      6.1.  Normative References . . . . . . . . . . . . . . . . . . . 14
      6.2.  Informative References . . . . . . . . . . . . . . . . . . 14
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 14
  
 
 
 Lyu                           Experimental                      [Page 2]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
-
-
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 14
 
 
 1.  Introduction
@@ -162,6 +159,9 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 3.1.  MPCRP Model
 
    MPCRP is a client-server model. One client sends a message to the
+   server with a room ID. The server broadcasts the message to other
+   clients who are in the same room. One client cannot communicate with
+   another client directly but relies on the intermediate server. One
  
 
 
@@ -170,9 +170,6 @@ Lyu                           Experimental                      [Page 3]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   server with a room ID. The server broadcasts the message to other
-   clients who are in the same room. One client cannot communicate with
-   another client directly but relies on the intermediate server. One
    client can join in more than one chatting room, and one chatting room
    can have more than two clients.
 
@@ -218,6 +215,9 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    transmit text messages, and its payload is the content of the text
    message. Command Message is used to transmit user-defined operations,
    such as SetUserName, JoinRoom, or QuitRoom. These command messages
+   will be described in Section 2.1.2.1.
+
+3.2.2.1.  Command Messages
  
 
 
@@ -225,10 +225,6 @@ Lyu                           Experimental                      [Page 4]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
-
-   will be described in Section 2.1.2.1.
-
-3.2.2.1.  Command Messages
 
    Currently, MPCRP [8890] supports twelve types of Command Messages and
    can be extended in the updated version. These twelve types of Command
@@ -274,6 +270,10 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 3.2.2.1.3.  CreateRoom
 
    CreateRoom command is sent from the client to the server to notify
+   the server it wants to create a chatting room. It is specified as
+   Message Type ID 3 in the header. The Payload Length is the length of
+   the room ID, and the Payload is the room ID. room ID MUST be globally
+   unique. It could be a string or a number, or a combination of a
  
 
 
@@ -282,10 +282,6 @@ Lyu                           Experimental                      [Page 5]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   the server it wants to create a chatting room. It is specified as
-   Message Type ID 3 in the header. The Payload Length is the length of
-   the room ID, and the Payload is the room ID. room ID MUST be globally
-   unique. It could be a string or a number, or a combination of a
    string and a number. The maximum length of the room ID is 20.
 
    CreateRoom MUST be sent by the client to the server after the first
@@ -330,6 +326,10 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
    JoinRoom MUST be sent by the client to the server after the first
    SetUserName command has been successfully processed. A user cannot
+   send or receive any messages from a chatting room unless it is in
+   that chatting room. This message could be sent multiple times during
+   the following communication to indicate the user wants to join
+   multiple chatting rooms.
  
 
 
@@ -337,11 +337,6 @@ Lyu                           Experimental                      [Page 6]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
-
-   send or receive any messages from a chatting room unless it is in
-   that chatting room. This message could be sent multiple times during
-   the following communication to indicate the user wants to join
-   multiple chatting rooms.
 
 3.2.2.1.6.  JoinRoom Response
 
@@ -386,6 +381,11 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    GetUserList Response is sent from the server to the client containing
    a user list. It is specified as Message Type ID 8 in the header. The
    payload consists of the room ID followed a string of a JSON array.
+   The room ID and the JSON string are separated by a colon.
+
+   If the room ID exists, the server SHOULD get all usernames from that
+   chatting room and check if the requesting client is also in the user
+   list. If the requesting client is in the user list, the server SHOULD
  
 
 
@@ -394,11 +394,6 @@ Lyu                           Experimental                      [Page 7]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   The room ID and the JSON string are separated by a colon.
-
-   If the room ID exists, the server SHOULD get all usernames from that
-   chatting room and check if the requesting client is also in the user
-   list. If the requesting client is in the user list, the server SHOULD
    reply a JSON array of all usernames to the client. If the room ID
    does not exist or the requesting client is not in the user list, the
    server SHOULD reply a JSON string of "room ID does not exist" or "You
@@ -442,18 +437,17 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    then check if the chatting room was created by the requesting client.
    If the chatting room exits and it was created by the requesting
    client, the server SHOULD delete the room ID from the global database
+   and remove all users in that chatting room. Finally, the server
+   SHOULD reply a success response to the client. If the room ID does
+   not exist, or the requesting client is not the user who created the
+   chatting room, a failure response SHOULD be sent to the client.
+
  
 
 
 Lyu                           Experimental                      [Page 8]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
-
-
-   and remove all users in that chatting room. Finally, the server
-   SHOULD reply a success response to the client. If the room ID does
-   not exist, or the requesting client is not the user who created the
-   chatting room, a failure response SHOULD be sent to the client.
 
 
 3.2.2.1.11.  QuitRoom 
@@ -498,6 +492,12 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    the client to the server or the server to the client. It is specified
    as Message Type ID 13. The Payload Length is the length of the
    subsequence payload. The subsequence payload has three parts. The
+   first 1 byte is the length of the room ID, the second part is the
+   room ID, and the third part is the string of the text message. The
+   format of the subsequence payload is the following:
+
+
+   0                   1                   2                     3
  
 
 
@@ -506,12 +506,6 @@ Lyu                           Experimental                      [Page 9]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
-   first 1 byte is the length of the room ID, the second part is the
-   room ID, and the third part is the string of the text message. The
-   format of the subsequence payload is the following:
-
-
-   0                   1                   2                     3
     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
    +---------------+-----------------------------------------------+
    |The Length of  |          Room ID                              |
@@ -548,6 +542,12 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    chatting room. After a chatting room is created, other chatting users
    can join this chatting room. If the chatting room is destroyed by the
    creator, all users in that chatting room will be removed.
+
+
+
+
+
+
 
 
 
