@@ -101,7 +101,7 @@ Table of Contents
      4.7.  A Chatting User Destroys a Chatting Room Created by 
            Itself . . . . . . . . . . . . . . . . . . . . . . . . . . 13
      4.8.  A Chatting User Joins Two Existent Chatting Rooms  . . . . 13
-   5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 13
+   5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 14
    6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 14
      6.1.  Normative References . . . . . . . . . . . . . . . . . . . 14
      6.2.  Informative References . . . . . . . . . . . . . . . . . . 14
@@ -171,14 +171,14 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
    client can join in more than one chatting room, and one chatting room
-   can have more than two clients.
+   can have multiple clients.
 
    The MPCRP design can be pictured as:
 
    +--------+      MPCRP       +-------+       MPCRP       +--------+
    |        |Commands/Responses|       | Commands/Responses|        |
-   | MPCRP  |<---------------->|MPCRP  |<----------------->|MPCRP   |
-   | Client1|     and Data     | Server|      and Data     | Client2|
+   | MPCRP  |<---------------->| MPCRP |<----------------->| MPCRP  |
+   |Client1 |     and Data     | Server|      and Data     |Client2 |
    |        |                  |       |                   |        |
    +--------+                  +-------+                   +--------+
    MPCRP Client               MPCRP Server                MPCRP Client
@@ -206,7 +206,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    The payload is the actual data contained in the message. For example,
    it could be the string of the text message or the response content of
    a command message. Its format depends on the type of messages, which
-   will be described in Section 2.1.2.
+   will be described in Section 3.2.2.
 
 3.2.2.  Types of Messages
 
@@ -215,7 +215,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    transmit text messages, and its payload is the content of the text
    message. Command Message is used to transmit user-defined operations,
    such as SetUserName, JoinRoom, or QuitRoom. These command messages
-   will be described in Section 2.1.2.1.
+   will be described in Section 3.2.2.1.
 
 3.2.2.1.  Command Messages
  
@@ -473,7 +473,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    the request room ID in the QuitRoom Request message. The result of
    the operation uses "0" to indicate success, "1" to indicate failure.
    The room ID and the result are separated by a colon. For example, if
-   the room ID is "happyroom001", and the result of quiting is a
+   the room ID is "happyroom001", and the result of quitting is a
    success, then the payload of the QuitRoom Response should be
    "happyroom001:0".
 
@@ -574,7 +574,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
                 |                                         |
    ------------ +------Command Message(SetUserName)------->
    Set User|    |                                         |
-   User    |    |                                         |
+   Name    |    |                                         |
    ------------ <--Command Message(SetUserName Response)--+
                 |             0:success                   |
                 |                                         |
@@ -630,7 +630,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
                 |                                         |
    ------------ +------Command Message(SetUserName)------->
    Set User|    |                                         |
-   User    |    |                                         |
+   Name    |    |                                         |
    ------------ <--Command Message(SetUserName Response)--+
                 |             0:success                   |
                 |                                         |
@@ -720,7 +720,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    messages from one chatting room do not affect the other chatting
    room.
 
-5.  Security Considerations
+
 
  
 
@@ -730,9 +730,12 @@ Lyu                           Experimental                     [Page 13]
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
 
+5.  Security Considerations
+
    This profile does not define or use a Public Key Infrastructure
-   (PKI). Server and Client can create an SSL 6101 or TLS 8446 channel
-   to secure the communication. The secure channel will not require any
+   (PKI). Server and Client can create an Secure Sockets Layer (SSL
+   RFC[6101]) or Transport Layer Security (TLS RFC[8446]) channel to
+   secure the communication. The secure channel will not require any
    change of the protocol.
 
 6.  References
@@ -773,9 +776,6 @@ Authors' Addresses
    Lyu Xiaosu
 
    EMail: lyuxiaosu@gwu.edu
-
-
-
 
 
 
