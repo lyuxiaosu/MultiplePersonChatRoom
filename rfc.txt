@@ -62,54 +62,110 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
    described in the Simplified BSD License.
 
 
-Table of Contents
 
-   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
-   2.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . . .  3
-   3.  Multi-Person Chat Room Communication . . . . . . . . . . . . .  3
-     3.1.  MPCRP Model  . . . . . . . . . . . . . . . . . . . . . . .  3
-     3.2.  MPCRP Messages . . . . . . . . . . . . . . . . . . . . . .  4
-       3.2.1.  MPCRP Message Format . . . . . . . . . . . . . . . . .  4
-       3.2.2.  Types of Messages  . . . . . . . . . . . . . . . . . .  4
-         3.2.2.1.  Command Messages . . . . . . . . . . . . . . . . .  5
-           3.2.2.1.1.  SetUserName  . . . . . . . . . . . . . . . . .  5
-           3.2.2.1.2.  SetUserName Response . . . . . . . . . . . . .  5
-           3.2.2.1.3.  CreateRoom . . . . . . . . . . . . . . . . . .  5
-           3.2.2.1.4.  CreateRoom Response  . . . . . . . . . . . . .  6
-           3.2.2.1.5.  JoinRoom . . . . . . . . . . . . . . . . . . .  6
-           3.2.2.1.6.  JoinRoom Response  . . . . . . . . . . . . . .  7
-           3.2.2.1.7.  GetUserList  . . . . . . . . . . . . . . . . .  7
-           3.2.2.1.8.  GetUserList Response . . . . . . . . . . . . .  7
-           3.2.2.1.9.  DestroyRoom  . . . . . . . . . . . . . . . . .  8
-           3.2.2.1.10.  DestroyRoom Response  . . . . . . . . . . . .  8
-           3.2.2.1.11.  QuitRoom  . . . . . . . . . . . . . . . . . .  9
-           3.2.2.1.12.  QuitRoom Response . . . . . . . . . . . . . .  9
-         3.2.2.2.  Data Messages  . . . . . . . . . . . . . . . . . .  9
-     3.3.  Message Exchange Examples  . . . . . . . . . . . . . . . . 10
-       3.3.1.  Create and Destroy a Chatting Room . . . . . . . . . . 10
-       3.3.2.  Join and Quit from a Chatting Room . . . . . . . . . . 11
-   4.  Test Cases . . . . . . . . . . . . . . . . . . . . . . . . . . 12
-     4.1.  A Chatting User Sets an Existent Username  . . . . . . . . 13
-     4.2.  A Chatting User Sets a Nonexistent Username  . . . . . . . 13
-     4.3.  Three Chatting Users Communicate In a Chatting Room  . . . 13
-     4.4.  A Chatting User Creates a Chatting Room With an Existent
-           Room ID  . . . . . . . . . . . . . . . . . . . . . . . . . 13
-     4.5.  A Chatting User Creates a Chatting Room With an 
-           Nonexistent Room ID  . . . . . . . . . . . . . . . . . . . 13
-     4.6.  A Chatting User Destroys a Chatting Room Created by 
-           Another Chatting User  . . . . . . . . . . . . . . . . . . 13
-     4.7.  A Chatting User Destroys a Chatting Room Created by 
-           Itself . . . . . . . . . . . . . . . . . . . . . . . . . . 13
-     4.8.  A Chatting User Joins Two Existent Chatting Rooms  . . . . 13
-   5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 14
-   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 14
-     6.1.  Normative References . . . . . . . . . . . . . . . . . . . 14
-     6.2.  Informative References . . . . . . . . . . . . . . . . . . 14
-   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 14
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 
 
 Lyu                           Experimental                      [Page 2]
+
+RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   2.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   3.  Multi-Person Chat Room Communication . . . . . . . . . . . . .  4
+     3.1.  MPCRP Model  . . . . . . . . . . . . . . . . . . . . . . .  4
+     3.2.  MPCRP Messages . . . . . . . . . . . . . . . . . . . . . .  5
+       3.2.1.  MPCRP Message Format . . . . . . . . . . . . . . . . .  5
+       3.2.2.  Types of Messages  . . . . . . . . . . . . . . . . . .  5
+         3.2.2.1.  Command Messages . . . . . . . . . . . . . . . . .  6
+           3.2.2.1.1.  SetUserName  . . . . . . . . . . . . . . . . .  6
+           3.2.2.1.2.  SetUserName Response . . . . . . . . . . . . .  6
+           3.2.2.1.3.  CreateRoom . . . . . . . . . . . . . . . . . .  6
+           3.2.2.1.4.  CreateRoom Response  . . . . . . . . . . . . .  7
+           3.2.2.1.5.  JoinRoom . . . . . . . . . . . . . . . . . . .  7
+           3.2.2.1.6.  JoinRoom Response  . . . . . . . . . . . . . .  8
+           3.2.2.1.7.  GetUserList  . . . . . . . . . . . . . . . . .  8
+           3.2.2.1.8.  GetUserList Response . . . . . . . . . . . . .  8
+           3.2.2.1.9.  DestroyRoom  . . . . . . . . . . . . . . . . .  9
+           3.2.2.1.10.  DestroyRoom Response  . . . . . . . . . . . .  9
+           3.2.2.1.11.  QuitRoom  . . . . . . . . . . . . . . . . . . 10
+           3.2.2.1.12.  QuitRoom Response . . . . . . . . . . . . . . 10
+         3.2.2.2.  Data Messages  . . . . . . . . . . . . . . . . . . 10
+     3.3.  Message Exchange Examples  . . . . . . . . . . . . . . . . 11
+       3.3.1.  Create and Destroy a Chatting Room . . . . . . . . . . 11
+       3.3.2.  Join and Quit from a Chatting Room . . . . . . . . . . 12
+   4.  Test Cases . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+     4.1.  A Chatting User Sets an Existent Username  . . . . . . . . 14
+     4.2.  A Chatting User Sets a Nonexistent Username  . . . . . . . 14
+     4.3.  Three Chatting Users Communicate In a Chatting Room  . . . 14
+     4.4.  A Chatting User Creates a Chatting Room With an Existent
+           Room ID  . . . . . . . . . . . . . . . . . . . . . . . . . 14
+     4.5.  A Chatting User Creates a Chatting Room With an 
+           Nonexistent Room ID  . . . . . . . . . . . . . . . . . . . 14
+     4.6.  A Chatting User Destroys a Chatting Room Created by 
+           Another Chatting User  . . . . . . . . . . . . . . . . . . 14
+     4.7.  A Chatting User Destroys a Chatting Room Created by 
+           Itself . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+     4.8.  A Chatting User Joins Two Existent Chatting Rooms  . . . . 14
+   5.  Security Considerations  . . . . . . . . . . . . . . . . . . . 15
+   6.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+     6.1.  Normative References . . . . . . . . . . . . . . . . . . . 15
+     6.2.  Informative References . . . . . . . . . . . . . . . . . . 15
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 15
+
+
+
+
+ 
+
+
+Lyu                           Experimental                      [Page 3]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -165,7 +221,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 3]
+Lyu                           Experimental                      [Page 4]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -221,7 +277,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 4]
+Lyu                           Experimental                      [Page 5]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -277,7 +333,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 5]
+Lyu                           Experimental                      [Page 6]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -333,7 +389,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 6]
+Lyu                           Experimental                      [Page 7]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -389,7 +445,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 7]
+Lyu                           Experimental                      [Page 8]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -445,7 +501,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 8]
+Lyu                           Experimental                      [Page 9]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -501,7 +557,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                      [Page 9]
+Lyu                           Experimental                     [Page 10]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -557,7 +613,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                     [Page 10]
+Lyu                           Experimental                     [Page 11]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -613,7 +669,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                     [Page 11]
+Lyu                           Experimental                     [Page 12]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -669,7 +725,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                     [Page 12]
+Lyu                           Experimental                     [Page 13]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -725,7 +781,7 @@ RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
  
 
 
-Lyu                           Experimental                     [Page 13]
+Lyu                           Experimental                     [Page 14]
 
 RFC 8890         A Protocol for Multi-Person Chat Room      October 2019
 
@@ -781,5 +837,5 @@ Authors' Addresses
 
 
 
-Lyu                           Experimental                     [Page 14]
+Lyu                           Experimental                     [Page 15]
 
