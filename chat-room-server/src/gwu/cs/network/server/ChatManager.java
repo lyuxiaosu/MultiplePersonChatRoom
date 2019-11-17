@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import gwu.cs.network.common.CreateRoomResponse;
 import gwu.cs.network.common.DataMessage;
+import gwu.cs.network.common.DestroyRoom;
 import gwu.cs.network.common.DestroyRoomResponse;
 import gwu.cs.network.common.GetUserListResponse;
 import gwu.cs.network.common.JoinRoomResponse;
@@ -14,6 +15,7 @@ import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class ChatManager implements IUserListChanged, IUserDeleted {
@@ -124,8 +126,14 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 	}
 	public void removeUser(String username) { //when client socket disconnect, call this function to remove user
 		Set<Room> rooms = users.get(username).getRooms();
-		for (Room room:rooms) {
-			room.deleteUser(username);
+		Iterator<Room> it = rooms.iterator();
+		while (it.hasNext()) {
+			Room room = it.next(); 			
+			if (room.getCreateUser().equals(username)) {
+				this.destroyRoom(username, room.getRoomID());				
+			} else {
+				room.deleteUser(username);
+			}
 		}
 		users.remove(username);
 	}

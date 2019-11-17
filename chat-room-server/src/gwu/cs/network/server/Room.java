@@ -23,7 +23,7 @@ public class Room {
 		subject.userListChanged(roomID);
 		
 	}
-	public void deleteUser(String user) {
+	public void deleteUser(String user) { //remove user from room
 		user_list.remove(user);
 		subject.userListChanged(roomID);
 	}
@@ -38,5 +38,8 @@ public class Room {
 	}
 	public String getCreateUser() {
 		return create_user;
+	}
+	public String getRoomID() {
+		return roomID;
 	}
 }

@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.SystemColor;
 
 public class ChatDialog extends JDialog {
 	
@@ -37,7 +38,7 @@ public class ChatDialog extends JDialog {
 	private JTextArea send_text;
 	private JButton btn_send;
 	private JList user_list;
-	private JButton btn_destory_room;
+	public JButton btn_destory_room;
 	private JButton btn_quit_room;
 	private DefaultListModel listmodel;
 	/**
@@ -45,9 +46,9 @@ public class ChatDialog extends JDialog {
 	 */
 	public static void main(String[] args) {
 		try {
-			ChatDialog dialog = new ChatDialog(null, "", "");
+			/*ChatDialog dialog = new ChatDialog(null, "", "");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
+			dialog.setVisible(true);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,45 +58,48 @@ public class ChatDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public ChatDialog(ChatClient chat_client, String userID, String roomID) {
+		setBackground(SystemColor.menu);
 		this.chat_client = chat_client;
 		this.roomID = roomID;
 		this.userID = userID;
 		setBounds(100, 100, 694, 626);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBackground(new Color(0, 139, 139));
+		contentPanel.setBackground(SystemColor.inactiveCaption);
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
+		
 		recv_text = new JTextArea();
 		recv_text.setForeground(new Color(255, 0, 0));
-		recv_text.setBackground(new Color(224, 255, 255));
+		recv_text.setBackground(SystemColor.inactiveCaptionBorder);
 		recv_text.setFont(new Font("Monospaced", Font.BOLD, 25));
 		recv_text.setLineWrap(true);
-		recv_text.setBounds(10, 25, 459, 381);
+		recv_text.setBounds(5, 0, 474, 406);
 		contentPanel.add(recv_text);
 		
 		
 		send_text = new JTextArea();
-		send_text.setBackground(new Color(224, 255, 255));
+		send_text.setForeground(SystemColor.desktop);
+		send_text.setBackground(SystemColor.inactiveCaptionBorder);
 		send_text.setFont(new Font("Comic Sans MS", Font.PLAIN, 25));
 		send_text.setLineWrap(true);
-		send_text.setBounds(10, 428, 459, 92);
+		send_text.setBounds(5, 410, 474, 132);
 		contentPanel.add(send_text);
 		
 		
 		user_list = new JList();
-		user_list.setBackground(new Color(224, 255, 255));
+		user_list.setBackground(SystemColor.inactiveCaptionBorder);
 		user_list.setFont(new Font("Consolas", Font.PLAIN, 25));
 		user_list.setForeground(new Color(0, 128, 0));
-		user_list.setBounds(483, 26, 175, 381);
+		user_list.setBounds(483, 0, 193, 406);
 		contentPanel.add(user_list);
 		
 		listmodel = new DefaultListModel();
 		user_list.setModel(listmodel);
 		
 		btn_send = new JButton("Send");
-		btn_send.setBackground(new Color(100, 149, 237));
+		btn_send.setBackground(SystemColor.activeCaptionBorder);
 		btn_send.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String content = send_text.getText();
@@ -105,7 +109,7 @@ public class ChatDialog extends JDialog {
 			}
 		});
 		btn_send.setFont(new Font("ËÎÌו", Font.PLAIN, 22));
-		btn_send.setBounds(483, 442, 140, 65);
+		btn_send.setBounds(510, 437, 140, 65);
 		contentPanel.add(btn_send);
 		
 		JPanel buttonPane = new JPanel();
@@ -119,20 +123,20 @@ public class ChatDialog extends JDialog {
 				chat_client.send(destroy_room.serilize());
 			}
 		});
-		btn_destory_room.setBackground(new Color(100, 149, 237));
+		btn_destory_room.setBackground(SystemColor.activeCaptionBorder);
 		btn_destory_room.setActionCommand("OK");
 		buttonPane.add(btn_destory_room);
 		getRootPane().setDefaultButton(btn_destory_room);
 			
 			
-		btn_quit_room = new JButton("Quit Room");
+		btn_quit_room = new JButton("  Quit Room  ");
 		btn_quit_room.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				QuitRoom quit_room = new QuitRoom(userID, roomID);
 				chat_client.send(quit_room.serilize());
 			}
 		});
-		btn_quit_room.setBackground(new Color(100, 149, 237));
+		btn_quit_room.setBackground(SystemColor.activeCaptionBorder);
 		btn_quit_room.setActionCommand("Cancel");
 		buttonPane.add(btn_quit_room);					
 		GetUserList user_list = new GetUserList(roomID);
