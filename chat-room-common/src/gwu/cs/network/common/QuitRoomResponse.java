@@ -9,8 +9,10 @@ import java.io.IOException;
 public class QuitRoomResponse extends ChatRoomCommandMessage {
 	int messageType = 12;
 	public int result = -1;
+	public String roomID;
 
-	public QuitRoomResponse(int result) {
+	public QuitRoomResponse(String roomID, int result) {
+		this.roomID = roomID;
 		this.result = result;
 	}
 	
@@ -20,7 +22,10 @@ public class QuitRoomResponse extends ChatRoomCommandMessage {
 		DataOutputStream out = new DataOutputStream(byteStream);
 		try {
 			out.writeByte(messageType);
-			out.writeByte(2);
+			int len = 2 + roomID.length() + 1 + 1;
+			out.writeChar(len);
+			out.writeUTF(roomID);
+			out.writeByte(1);
 			out.writeByte(result);
 			out.flush();
 		} catch (IOException e) {
@@ -32,19 +37,25 @@ public class QuitRoomResponse extends ChatRoomCommandMessage {
 	}
 
 	public static QuitRoomResponse unSerilize(byte[] stream) {
-		// TODO Auto-generated method stub
 		ByteArrayInputStream bs = new ByteArrayInputStream(stream);
 		DataInputStream in = new DataInputStream(bs);
-		
+				
+		String roomID = "";
 		int result = -1;
-		try {			
+		try {		
+			int len_roomID = in.readChar();
+			byte[] byte_roomID = new byte[len_roomID];
+			in.read(byte_roomID);
+					
 			int len = in.readByte();
 			result = in.readByte();
+			roomID = new String(byte_roomID);
+					
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new QuitRoomResponse(result);
+		return new QuitRoomResponse(roomID, result);
 	}
 	
 	@Override

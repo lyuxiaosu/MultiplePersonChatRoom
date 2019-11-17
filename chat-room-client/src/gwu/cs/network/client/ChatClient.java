@@ -11,9 +11,11 @@ import java.nio.charset.StandardCharsets;
 
 import gwu.cs.network.common.CreateRoomResponse;
 import gwu.cs.network.common.DataMessage;
+import gwu.cs.network.common.DestroyRoomResponse;
 import gwu.cs.network.common.GetUserList;
 import gwu.cs.network.common.GetUserListResponse;
 import gwu.cs.network.common.JoinRoomResponse;
+import gwu.cs.network.common.QuitRoomResponse;
 import gwu.cs.network.common.SetUserNameResponse;
 import gwu.cs.network.common.UserListChange;
 import gwu.cs.network.common.GetUserListResponse;
@@ -118,6 +120,7 @@ public class ChatClient extends Thread {
 			break;
 		case 8:
 			handleGetUserListResponse(message_payload);
+			break;
 		case 10:
 			handleDestroyRoomResponse(message_payload);
 			break;
@@ -126,6 +129,7 @@ public class ChatClient extends Thread {
 			break;
 		case 14:
 			handleUserListChanged(message_payload);
+			break;
 		default:
 		}
 	}
@@ -167,11 +171,13 @@ public class ChatClient extends Thread {
 	}
 	
 	private void handleDestroyRoomResponse(byte[] message_payload) {
-		
+		DestroyRoomResponse response = DestroyRoomResponse.unSerilize(message_payload);
+		this.main_window.handleDestroyRoomResponse(response.result, response.roomID, response.userID);
 	}
 	
 	private void handleQuitRoomResponse(byte[] message_payload) {
-		
+		QuitRoomResponse response = QuitRoomResponse.unSerilize(message_payload);
+		this.main_window.handleQuitRoomResponse(response.result, response.roomID);
 	}
 	
 	private void handleGetUserListResponse(byte[] message_payload) {

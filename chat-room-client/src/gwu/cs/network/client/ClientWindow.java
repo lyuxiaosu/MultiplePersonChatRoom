@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
 
 public class ClientWindow {
@@ -174,6 +175,7 @@ public class ClientWindow {
 		btn_set_name.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String username = username_text.getText();
+				
 				SetUserName set_username = new SetUserName(username);
 				chat_client.send(set_username.serilize());
 				try {
@@ -195,6 +197,7 @@ public class ClientWindow {
 	public void handleDataMessage(String username, String roomID, String message) {
 		ChatDialog dialog = rooms.get(roomID);
 		if (dialog != null) {
+			message = message.trim();
 			dialog.showMessage(username, message);
 		}
 	}
@@ -218,7 +221,8 @@ public class ClientWindow {
 	public void handleCreateRoomResponse(int result, String roomID) {
 		if (result == 0) {
 			ChatDialog dialog = new ChatDialog(chat_client, chat_client.username, roomID);
-			dialog.setTitle(roomID);
+			String title = chat_client.username + "-" + roomID;
+			dialog.setTitle(title);
 			rooms.put(roomID, dialog);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -230,7 +234,8 @@ public class ClientWindow {
 	public void handleJoinRoomResponse(int result, String roomID) {
 		if (result == 0) {
 			ChatDialog dialog = new ChatDialog(chat_client, chat_client.username, roomID);
-			dialog.setTitle(roomID);
+			String title = chat_client.username + "-" + roomID;
+			dialog.setTitle(title);
 			rooms.put(roomID, dialog);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -239,6 +244,24 @@ public class ClientWindow {
 		}
 	}
 
+	public void handleQuitRoomResponse(int result, String roomID) {
+		if (result == 0) {
+			ChatDialog dialog = rooms.remove(roomID);
+			dialog.dispose();
+		} else {
+			JOptionPane.showMessageDialog(this.frmChatRoom, "Quit room failed, please try again");
+		}
+	}
+	
+	public void handleDestroyRoomResponse(int result, String roomID, String userID) {
+		if (result == 0) {
+			ChatDialog dialog = rooms.remove(roomID);
+			dialog.destroyRoom(userID);
+		} else if (userID.equals(chat_client.username)){
+			ChatDialog dialog = rooms.get(roomID);
+			JOptionPane.showMessageDialog(dialog, "Destroy room failed, you are not allowed to destroy a room that not created by you");
+		}
+	}
 	public void handleGetUserListResponse(Set<String> user_list, String roomID) {
 		// TODO Auto-generated method stub
 		ChatDialog dialog = rooms.get(roomID);

@@ -10,11 +10,15 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gwu.cs.network.common.DataMessage;
+import gwu.cs.network.common.DestroyRoom;
 import gwu.cs.network.common.GetUserList;
+import gwu.cs.network.common.QuitRoom;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.Set;
@@ -109,6 +113,12 @@ public class ChatDialog extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			
 		btn_destory_room = new JButton("Destroy Room");
+		btn_destory_room.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DestroyRoom destroy_room = new DestroyRoom(userID, roomID);
+				chat_client.send(destroy_room.serilize());
+			}
+		});
 		btn_destory_room.setBackground(new Color(100, 149, 237));
 		btn_destory_room.setActionCommand("OK");
 		buttonPane.add(btn_destory_room);
@@ -116,11 +126,15 @@ public class ChatDialog extends JDialog {
 			
 			
 		btn_quit_room = new JButton("Quit Room");
+		btn_quit_room.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				QuitRoom quit_room = new QuitRoom(userID, roomID);
+				chat_client.send(quit_room.serilize());
+			}
+		});
 		btn_quit_room.setBackground(new Color(100, 149, 237));
 		btn_quit_room.setActionCommand("Cancel");
-		buttonPane.add(btn_quit_room);
-			
-		
+		buttonPane.add(btn_quit_room);					
 		GetUserList user_list = new GetUserList(roomID);
 		chat_client.send(user_list.serilize());
 	}
@@ -133,6 +147,18 @@ public class ChatDialog extends JDialog {
 		for (String username: userlist) {
 			System.out.println("-----------update userlist");
 			listmodel.addElement(username);
+		}
+	}
+	
+	public void destroyRoom(String userID) {
+		System.out.print("this.userID:" + this.userID + ", userID:¡¡" + userID);
+		
+		if (this.userID.equals(userID)) { 
+			System.out.println("-------------enter destroyRoom-----------");
+			this.dispose();
+		} else {
+			JOptionPane.showMessageDialog(this, "room " + this.userID+ "-" + this.roomID + " is destroyed", "warning", JOptionPane.WARNING_MESSAGE);		
+			this.dispose();
 		}
 	}
 }

@@ -82,14 +82,14 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 		if (rooms.containsKey(roomID)) {
 			Room room = rooms.get(roomID);
 			if (room.getCreateUser().equals(username) && users.get(username).getUserName().equals(username)) {
-				notifyRoomDestoried(room.getUserListSet());
-				rooms.remove(roomID);
+				users.get(username).quitRoom(room); //remove room from user
+				notifyRoomDestoried(username, roomID, room.getUserListSet());
+				rooms.remove(roomID);//remove room from rooms
 				return true;
 			} 		
 		}
-			
-		
-		DestroyRoomResponse response = new DestroyRoomResponse(1);
+				
+		DestroyRoomResponse response = new DestroyRoomResponse(username, roomID, 1);
 		users.get(username).getChatSocket().send(response.serilize());
 		return false;
 	}
@@ -97,16 +97,16 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 	public boolean quitRoom(String username, String roomID) {
 		if (rooms.containsKey(roomID)) {
 			Room room = rooms.get(roomID);
-			if (users.get(username).getUserName().equals(username) && room.getCreateUser().contains(username)) {
+			if (users.get(username).getUserName().equals(username)) {
 				room.deleteUser(username);
-				users.get(username).quitRoom(room);
-				QuitRoomResponse response = new QuitRoomResponse(0);
+				users.get(username).quitRoom(room); //remove room in user's hashmap
+				QuitRoomResponse response = new QuitRoomResponse(roomID, 0);
 				users.get(username).getChatSocket().send(response.serilize());
 				return true;
 			} 
 		}
 		
-		QuitRoomResponse response = new QuitRoomResponse(1);
+		QuitRoomResponse response = new QuitRoomResponse(roomID, 1);
 		users.get(username).getChatSocket().send(response.serilize());
 		return false;
 	}
@@ -139,11 +139,12 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 		}
     }
 	
-	private void notifyRoomDestoried(Set<String> user_list) {
-		DestroyRoomResponse response = new DestroyRoomResponse(0);
-		
+	private void notifyRoomDestoried(String username, String roomID, Set<String> user_list) {
+		DestroyRoomResponse response = new DestroyRoomResponse(username, roomID, 0);		
 		for (String user:user_list) {
-			users.get(user).getChatSocket().send(response.serilize());
+			//if (user.equals(username) == false) {
+				users.get(user).getChatSocket().send(response.serilize());
+			//}
 		}
 	}
 
