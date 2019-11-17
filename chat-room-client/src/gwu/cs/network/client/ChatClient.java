@@ -11,7 +11,12 @@ import java.nio.charset.StandardCharsets;
 
 import gwu.cs.network.common.CreateRoomResponse;
 import gwu.cs.network.common.DataMessage;
+import gwu.cs.network.common.GetUserList;
+import gwu.cs.network.common.GetUserListResponse;
+import gwu.cs.network.common.JoinRoomResponse;
 import gwu.cs.network.common.SetUserNameResponse;
+import gwu.cs.network.common.UserListChange;
+import gwu.cs.network.common.GetUserListResponse;
 
 public class ChatClient extends Thread {
 	String username;
@@ -97,7 +102,7 @@ public class ChatClient extends Thread {
 	}
 	
 	public void handleMessage(int messageType, byte[] message_payload) {
-		System.out.print("client receive messageType:" + messageType);
+		System.out.println("client receive messageType:" + messageType);
 		switch(messageType) {
 		case 13:		
 			handleDataMessage(message_payload);
@@ -111,12 +116,16 @@ public class ChatClient extends Thread {
 		case 6:
 			handleJoinRoomResponse(message_payload);
 			break;
+		case 8:
+			handleGetUserListResponse(message_payload);
 		case 10:
 			handleDestroyRoomResponse(message_payload);
 			break;
 		case 12:
 			handleQuitRoomResponse(message_payload);
 			break;
+		case 14:
+			handleUserListChanged(message_payload);
 		default:
 		}
 	}
@@ -151,7 +160,10 @@ public class ChatClient extends Thread {
 	}
 	
 	private void handleJoinRoomResponse(byte[] message_payload) {
+		JoinRoomResponse response = JoinRoomResponse.unSerilize(message_payload);
+		System.out.println("handle joinRoom response,roomid:" + response.roomID + " result is:" + response.result);
 		
+		this.main_window.handleJoinRoomResponse(response.result, response.roomID);
 	}
 	
 	private void handleDestroyRoomResponse(byte[] message_payload) {
@@ -162,6 +174,16 @@ public class ChatClient extends Thread {
 		
 	}
 	
+	private void handleGetUserListResponse(byte[] message_payload) {
+		GetUserListResponse response = GetUserListResponse.unSerilize(message_payload);
+		this.main_window.handleGetUserListResponse(response.user_list, response.roomID);
+	}
+	
+	private void handleUserListChanged(byte[] message_payload) {
+		UserListChange change = UserListChange.unSerilize(message_payload);
+		GetUserList user_list = new GetUserList(change.roomID);
+		send(user_list.serilize());
+	}
 	public void send(byte[] message) {
 		try {
 			out.write(message);

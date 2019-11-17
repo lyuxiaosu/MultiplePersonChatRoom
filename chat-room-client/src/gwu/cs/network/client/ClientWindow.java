@@ -7,6 +7,7 @@ import javax.swing.JTextArea;
 
 import gwu.cs.network.common.CreateRoom;
 import gwu.cs.network.common.DataMessage;
+import gwu.cs.network.common.JoinRoom;
 import gwu.cs.network.common.SetUserName;
 
 import javax.swing.JScrollPane;
@@ -17,6 +18,7 @@ import javax.swing.JDialog;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -73,7 +75,6 @@ public class ClientWindow {
 	 */
 	private void initialize() {
 		frmChatRoom = new JFrame();
-		frmChatRoom.setTitle("Chat Room");
 		frmChatRoom.setBounds(100, 100, 440, 782);
 		frmChatRoom.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmChatRoom.getContentPane().setLayout(null);
@@ -95,7 +96,7 @@ public class ClientWindow {
 		panel.setLayout(null);
 		
 		create_room_text = new JTextField();
-		create_room_text.setBounds(30, 30, 166, 24);
+		create_room_text.setBounds(29, 32, 166, 29);
 		panel.add(create_room_text);
 		create_room_text.setColumns(20);
 		create_room_text.setEnabled(false);
@@ -134,13 +135,24 @@ public class ClientWindow {
 		panel_1.setLayout(null);
 		
 		join_room_text = new JTextField();
-		join_room_text.setBounds(30, 30, 166, 24);
+		join_room_text.setBounds(30, 32, 166, 29);
 		join_room_text.setColumns(20);
 		panel_1.add(join_room_text);
 		join_room_text.setEnabled(false);
 		
 		btn_join_room = new JButton("Join Room");
-		btn_join_room.setBounds(238, 30, 128, 29);
+		btn_join_room.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String roomID = join_room_text.getText();
+					JoinRoom join_room = new JoinRoom(chat_client.username, roomID);
+					chat_client.send(join_room.serilize());				
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		btn_join_room.setBounds(229, 32, 140, 29);
 		btn_join_room.setFont(new Font("ËÎÌו", Font.PLAIN, 18));
 		panel_1.add(btn_join_room);
 		btn_join_room.setEnabled(false);
@@ -152,12 +164,12 @@ public class ClientWindow {
 		panel_2.setLayout(null);
 		
 		username_text = new JTextField();
-		username_text.setBounds(30, 30, 166, 24);
+		username_text.setBounds(30, 32, 166, 29);
 		panel_2.add(username_text);
 		username_text.setColumns(20);
 		
 		btn_set_name = new JButton("Set Name");
-		btn_set_name.setBounds(242, 30, 126, 29);
+		btn_set_name.setBounds(229, 32, 140, 29);
 		panel_2.add(btn_set_name);
 		btn_set_name.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -195,8 +207,9 @@ public class ClientWindow {
 			btn_join_room.setEnabled(true);
 			this.btn_set_name.setEnabled(false);
 			username_text.setEnabled(false);
+			this.frmChatRoom.setTitle(chat_client.username);
 			
-			JOptionPane.showMessageDialog(this.frmChatRoom, "Username has been set successfully.");			
+			JOptionPane.showMessageDialog(this.frmChatRoom, "Username has been set successfully. You can create a new chat room or join an existing chat room.");			
 		} else {		
 			JOptionPane.showMessageDialog(this.frmChatRoom, "Username already exist, please try another one!");
 		}
@@ -204,13 +217,36 @@ public class ClientWindow {
 	
 	public void handleCreateRoomResponse(int result, String roomID) {
 		if (result == 0) {
-			ChatDialog dialog = new ChatDialog(roomID);
+			ChatDialog dialog = new ChatDialog(chat_client, chat_client.username, roomID);
 			dialog.setTitle(roomID);
 			rooms.put(roomID, dialog);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} else {
 			JOptionPane.showMessageDialog(this.frmChatRoom, "Room ID already exist, please try another one!");
+		}
+	}
+	
+	public void handleJoinRoomResponse(int result, String roomID) {
+		if (result == 0) {
+			ChatDialog dialog = new ChatDialog(chat_client, chat_client.username, roomID);
+			dialog.setTitle(roomID);
+			rooms.put(roomID, dialog);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} else {
+			JOptionPane.showMessageDialog(this.frmChatRoom, "Room does not exist, make sure the roomID is correct");
+		}
+	}
+
+	public void handleGetUserListResponse(Set<String> user_list, String roomID) {
+		// TODO Auto-generated method stub
+		ChatDialog dialog = rooms.get(roomID);
+		if (dialog != null) {
+			System.out.println("update userlist for room:" + roomID + " user_list size is:" + user_list.size());
+			dialog.updateUserList(user_list);
+		} else {
+			System.out.println("no room:" + roomID);
 		}
 	}
 }

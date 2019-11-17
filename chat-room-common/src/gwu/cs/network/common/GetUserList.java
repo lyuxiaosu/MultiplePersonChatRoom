@@ -6,14 +6,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class JoinRoomResponse extends ChatRoomCommandMessage {
-	int messageType = 6;
-	public int result = -1;
+public class GetUserList extends ChatRoomCommandMessage {
+	int messageType = 7;
 	public String roomID;
-
-	public JoinRoomResponse(String roomID, int result){
+	
+	public GetUserList(String roomID) {
 		this.roomID = roomID;
-		this.result = result;
 	}
 	
 	@Override
@@ -22,11 +20,10 @@ public class JoinRoomResponse extends ChatRoomCommandMessage {
 		DataOutputStream out = new DataOutputStream(byteStream);
 		try {
 			out.writeByte(messageType);
-			int len = 2 + roomID.length() + 1 + 1;
+			int len = 2 + roomID.length();
 			out.writeChar(len);
-			out.writeUTF(roomID);
-			out.writeByte(1);
-			out.writeByte(result);
+			out.writeChar(roomID.length());
+			out.writeBytes(roomID);
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -35,29 +32,22 @@ public class JoinRoomResponse extends ChatRoomCommandMessage {
 		byte[] data = byteStream.toByteArray();
 		return data;
 	}
-	public static JoinRoomResponse unSerilize(byte[] stream) {
-		// TODO Auto-generated method stub
+	public static GetUserList unSerilize(byte[] stream) {
 		ByteArrayInputStream bs = new ByteArrayInputStream(stream);
 		DataInputStream in = new DataInputStream(bs);
-				
 		String roomID = "";
-		int result = -1;
-		try {		
+		try {			
 			int len_roomID = in.readChar();
 			byte[] byte_roomID = new byte[len_roomID];
 			in.read(byte_roomID);
-					
-			int len = in.readByte();
-			result = in.readByte();
-			roomID = new String(byte_roomID);
-					
+		
+			roomID = new String(byte_roomID);	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new JoinRoomResponse(roomID, result);
+		return new GetUserList(roomID);
 	}
-
 	@Override
 	public int getMessageType() {
 		return messageType;

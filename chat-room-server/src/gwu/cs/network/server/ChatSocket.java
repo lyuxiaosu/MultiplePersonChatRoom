@@ -15,6 +15,7 @@ import org.omg.CORBA.portable.InputStream;
 import gwu.cs.network.common.CreateRoom;
 import gwu.cs.network.common.DataMessage;
 import gwu.cs.network.common.DestroyRoom;
+import gwu.cs.network.common.GetUserList;
 import gwu.cs.network.common.JoinRoom;
 import gwu.cs.network.common.QuitRoom;
 import gwu.cs.network.common.SetUserName;
@@ -120,8 +121,12 @@ public class ChatSocket extends Thread {
 		case 11:
 			handleQuitRoom(message_payload);
 			break;
+		case 7:
+			handleGetUserList(message_payload);
+			break;
 		case 14:
 			handleUserListChanged(message_payload);
+			break;
 		default:
 		}	
 	}
@@ -162,6 +167,7 @@ public class ChatSocket extends Thread {
 		JoinRoom join_room = JoinRoom.unSerilize(message_payload);
 		String userID = join_room.userID;
 		String roomID = join_room.roomID;
+		System.out.println("handle joinRoom user id:" + userID + " roomID:" + roomID);
 		ChatManager.getChatManager().joinRoom(userID, roomID);
 	}
 	
@@ -172,9 +178,15 @@ public class ChatSocket extends Thread {
 		ChatManager.getChatManager().quitRoom(userID, roomID);
 	}
 	
+	private void handleGetUserList(byte[] message_payload) {
+		GetUserList user_list = GetUserList.unSerilize(message_payload);
+		System.out.println("handle get userlist, roomID:" + user_list.roomID);
+		ChatManager.getChatManager().getUserList(user_list.roomID, this);
+	}
 	private void handleUserListChanged(byte[] message_payload) {
 		UserListChange change = UserListChange.unSerilize(message_payload);
 		String roomID = change.roomID;
+		System.out.println("handle userlist changed----------");
 		ChatManager.getChatManager().userListChanged(roomID);
 	}
 	

@@ -12,7 +12,7 @@ public class JoinRoom extends ChatRoomCommandMessage {
 	public String userID;
 	
 	
-	JoinRoom(String userID, String roomID) {
+	public JoinRoom(String userID, String roomID) {
 		this.userID = userID;
 		this.roomID = roomID;
 	}

@@ -19,7 +19,9 @@ public class Room {
 
 	public void addUser(String user) {
 		user_list.add(user);
+		System.out.println("------add new user:"+ user);
 		subject.userListChanged(roomID);
+		
 	}
 	public void deleteUser(String user) {
 		user_list.remove(user);

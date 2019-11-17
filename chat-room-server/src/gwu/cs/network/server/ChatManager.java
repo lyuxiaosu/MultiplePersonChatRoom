@@ -5,6 +5,7 @@ import java.util.Vector;
 import gwu.cs.network.common.CreateRoomResponse;
 import gwu.cs.network.common.DataMessage;
 import gwu.cs.network.common.DestroyRoomResponse;
+import gwu.cs.network.common.GetUserListResponse;
 import gwu.cs.network.common.JoinRoomResponse;
 import gwu.cs.network.common.QuitRoomResponse;
 import gwu.cs.network.common.SetUserNameResponse;
@@ -67,11 +68,11 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 			Room room = rooms.get(roomID);
 			room.addUser(username);
 			users.get(username).joinRoom(room);
-			JoinRoomResponse response = new JoinRoomResponse(0);
+			JoinRoomResponse response = new JoinRoomResponse(roomID, 0);
 			users.get(username).getChatSocket().send(response.serilize());
 			return true;
 		} else {
-			JoinRoomResponse response = new JoinRoomResponse(1);
+			JoinRoomResponse response = new JoinRoomResponse(roomID, 1);
 			users.get(username).getChatSocket().send(response.serilize());
 			return false;
 		}
@@ -110,6 +111,17 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 		return false;
 	}
 	
+	public void getUserList(String roomID, ChatSocket cs) {
+		if (rooms.containsKey(roomID)) {
+			Set<String> user_list = rooms.get(roomID).getUserListSet();
+			System.out.println("roomID:" + roomID + " has " + user_list.size() + "users");
+			GetUserListResponse response = new GetUserListResponse(user_list, roomID);
+			cs.send(response.serilize());
+		} else {
+			GetUserListResponse response = new GetUserListResponse(null, roomID);
+			cs.send(response.serilize());
+		}
+	}
 	public void removeUser(String username) { //when client socket disconnect, call this function to remove user
 		Set<Room> rooms = users.get(username).getRooms();
 		for (Room room:rooms) {
