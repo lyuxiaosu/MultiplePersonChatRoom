@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -54,8 +55,11 @@ public class ChatClient extends Thread {
 	}
 	
 	public void run() {
-		try {		
-			socket = new Socket("127.0.0.1", 23456);  
+		try {
+			InetAddress address = InetAddress.getLocalHost();
+			String serverip = address.getHostAddress();
+			socket = new Socket(serverip, 23456); 
+			System.out.println("client connects to server " + serverip + " port 23456"); 
 			out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 			        
