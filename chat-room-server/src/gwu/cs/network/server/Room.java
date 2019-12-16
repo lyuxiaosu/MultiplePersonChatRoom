@@ -19,7 +19,7 @@ public class Room {
 
 	public void addUser(String user) {
 		user_list.add(user);
-		System.out.println("------add new user:"+ user);
+		System.out.println("Add new user:"+ user + " to room:" + roomID);
 		subject.userListChanged(roomID);
 		
 	}

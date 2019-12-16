@@ -65,7 +65,7 @@ public class ChatSocket extends Thread {
 			out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			
 			while(true) {	
-				System.out.println("waiting for reading stream");
+				//System.out.println("waiting for reading stream");
 				int messageType = in.readByte();
 				int length = in.readChar();
 				byte[] message_payload = new byte[length];
@@ -87,7 +87,7 @@ public class ChatSocket extends Thread {
 			            end = true;
 			        }
 			    }
-			    System.out.println("receive message type is :" + messageType + " length:" + length);
+			    //System.out.println("receive message type is :" + messageType + " length:" + length);
 			    handleMessage(messageType, message_payload);
 			}
 		} catch (IOException e) {
@@ -152,7 +152,7 @@ public class ChatSocket extends Thread {
 		CreateRoom create_room = CreateRoom.unSerilize(message_payload);
 		String userID = create_room.userID;
 		String roomID = create_room.roomID;
-		System.out.println("user id:" + userID + " roomID:" + roomID);
+		//System.out.println("user id:" + userID + " roomID:" + roomID);
 		ChatManager.getChatManager().createRoom(userID, roomID);
 	}
 	
@@ -167,7 +167,7 @@ public class ChatSocket extends Thread {
 		JoinRoom join_room = JoinRoom.unSerilize(message_payload);
 		String userID = join_room.userID;
 		String roomID = join_room.roomID;
-		System.out.println("handle joinRoom user id:" + userID + " roomID:" + roomID);
+		//System.out.println("handle joinRoom user id:" + userID + " roomID:" + roomID);
 		ChatManager.getChatManager().joinRoom(userID, roomID);
 	}
 	
@@ -180,13 +180,13 @@ public class ChatSocket extends Thread {
 	
 	private void handleGetUserList(byte[] message_payload) {
 		GetUserList user_list = GetUserList.unSerilize(message_payload);
-		System.out.println("handle get userlist, roomID:" + user_list.roomID);
+		//System.out.println("handle get userlist, roomID:" + user_list.roomID);
 		ChatManager.getChatManager().getUserList(user_list.roomID, this);
 	}
 	private void handleUserListChanged(byte[] message_payload) {
 		UserListChange change = UserListChange.unSerilize(message_payload);
 		String roomID = change.roomID;
-		System.out.println("handle userlist changed----------");
+		//System.out.println("handle userlist changed----------");
 		ChatManager.getChatManager().userListChanged(roomID);
 	}
 	

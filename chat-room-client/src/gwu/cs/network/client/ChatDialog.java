@@ -41,19 +41,7 @@ public class ChatDialog extends JDialog {
 	public JButton btn_destory_room;
 	private JButton btn_quit_room;
 	private DefaultListModel listmodel;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			/*ChatDialog dialog = new ChatDialog(null, "", "");
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);*/
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	/**
 	 * Create the dialog.
 	 */
@@ -71,6 +59,7 @@ public class ChatDialog extends JDialog {
 		
 		
 		recv_text = new JTextArea();
+		recv_text.setEditable(false);
 		recv_text.setForeground(new Color(255, 0, 0));
 		recv_text.setBackground(SystemColor.inactiveCaptionBorder);
 		recv_text.setFont(new Font("Monospaced", Font.BOLD, 25));
@@ -149,7 +138,6 @@ public class ChatDialog extends JDialog {
 	public void updateUserList(Set<String> userlist) {
 		this.listmodel.removeAllElements();
 		for (String username: userlist) {
-			System.out.println("-----------update userlist");
 			listmodel.addElement(username);
 		}
 	}
@@ -158,7 +146,6 @@ public class ChatDialog extends JDialog {
 		System.out.print("this.userID:" + this.userID + ", userID:¡¡" + userID);
 		
 		if (this.userID.equals(userID)) { 
-			System.out.println("-------------enter destroyRoom-----------");
 			this.dispose();
 		} else {
 			JOptionPane.showMessageDialog(this, "room " + this.userID+ "-" + this.roomID + " is destroyed", "warning", JOptionPane.WARNING_MESSAGE);		

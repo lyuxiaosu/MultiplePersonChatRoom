@@ -26,6 +26,7 @@ import java.util.Set;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -88,6 +89,14 @@ public class ClientWindow {
 		frmChatRoom.setBounds(100, 100, 440, 782);
 		frmChatRoom.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmChatRoom.getContentPane().setLayout(null);
+		
+		
+		UIManager.put("OptionPane.cancelButtonText", "Cancel");
+	    UIManager.put("OptionPane.noButtonText", "No");
+	    UIManager.put("OptionPane.okButtonText", "OK");
+	    UIManager.put("OptionPane.yesButtonText", "Yes");
+	    UIManager.put("OptionPane.messageDialogTitle", "Message");
+
 		
 		/*Some piece of code*/
 		frmChatRoom.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -310,10 +319,8 @@ public class ClientWindow {
 		// TODO Auto-generated method stub
 		ChatDialog dialog = rooms.get(roomID);
 		if (dialog != null) {
-			System.out.println("update userlist for room:" + roomID + " user_list size is:" + user_list.size());
+			//System.out.println("update userlist for room:" + roomID + " user_list size is:" + user_list.size());
 			dialog.updateUserList(user_list);
-		} else {
-			System.out.println("no room:" + roomID);
 		}
 	}
 }

@@ -66,7 +66,7 @@ public class ChatClient extends Thread {
 			while(true) {			
 				int messageType = in.readByte();			
 				int length = in.readChar();
-				System.out.println("client receive messageType is:" + messageType + " len is:" + length);
+				//System.out.println("client receive messageType is:" + messageType + " len is:" + length);
 				byte[] message_payload = new byte[length];
 				boolean end = false;
 				StringBuilder dataString = new StringBuilder(length);
@@ -108,7 +108,7 @@ public class ChatClient extends Thread {
 	}
 	
 	public void handleMessage(int messageType, byte[] message_payload) {
-		System.out.println("client receive messageType:" + messageType);
+		//System.out.println("client receive messageType:" + messageType);
 		switch(messageType) {
 		case 13:		
 			handleDataMessage(message_payload);
@@ -152,7 +152,7 @@ public class ChatClient extends Thread {
 	
 	private void handleSetUserNameResponse(byte[] message_payload) {
 		SetUserNameResponse response = SetUserNameResponse.unSerilize(message_payload);
-		System.out.println("handle setusername response, username:" + response.userID + " result is:" + response.result);
+		//System.out.println("handle setusername response, username:" + response.userID + " result is:" + response.result);
 
 		if (response.result == 0) {
 			this.username = response.userID;
@@ -162,14 +162,14 @@ public class ChatClient extends Thread {
 	
 	private void handleCreateRoomResponse(byte[] message_payload) {
 		CreateRoomResponse response = CreateRoomResponse.unSerilize(message_payload);
-		System.out.println("handle createRoom response, roomid:" + response.roomID + " result is:" + response.result);
+		//System.out.println("handle createRoom response, roomid:" + response.roomID + " result is:" + response.result);
 		
 		this.main_window.handleCreateRoomResponse(response.result, response.roomID);
 	}
 	
 	private void handleJoinRoomResponse(byte[] message_payload) {
 		JoinRoomResponse response = JoinRoomResponse.unSerilize(message_payload);
-		System.out.println("handle joinRoom response,roomid:" + response.roomID + " result is:" + response.result);
+		//System.out.println("handle joinRoom response,roomid:" + response.roomID + " result is:" + response.result);
 		
 		this.main_window.handleJoinRoomResponse(response.result, response.roomID);
 	}

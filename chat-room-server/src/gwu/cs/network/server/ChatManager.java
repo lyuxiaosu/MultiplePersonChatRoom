@@ -48,19 +48,20 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 		if (rooms.containsKey(roomID)) {
 			CreateRoomResponse response = new CreateRoomResponse(roomID, 1);
 			users.get(username).getChatSocket().send(response.serilize());
+			System.out.println("roomID:" + roomID + " has already been existed");
 			return false;
 		} else {
-			System.out.println("-----createRoom--------");
+			//System.out.println("-----createRoom--------");
 			Room room = new Room(roomID, username, this);
 			rooms.put(roomID, room);
-			System.out.println("-----createRoom2--------");	
+			//System.out.println("-----createRoom2--------");	
 			room.addUser(username); //the one who creates the room will be joined this room automatically				
-			System.out.println("-----createRoom3--------");
+			//System.out.println("-----createRoom3--------");
 			users.get(username).joinRoom(room); //user join room
-			System.out.println("-----createRoom4--------");
+			System.out.println("Create Room ID:" + roomID + " created by userID:" + username);
 			CreateRoomResponse response = new CreateRoomResponse(roomID, 0);
 			users.get(username).getChatSocket().send(response.serilize());
-			System.out.println("send create room response");
+			//System.out.println("send create room response");
 			return true;
 		}
 	}
@@ -72,10 +73,12 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 			users.get(username).joinRoom(room);
 			JoinRoomResponse response = new JoinRoomResponse(roomID, 0);
 			users.get(username).getChatSocket().send(response.serilize());
+			System.out.println("userID:" + username + " joined in room " + roomID);
 			return true;
 		} else {
 			JoinRoomResponse response = new JoinRoomResponse(roomID, 1);
 			users.get(username).getChatSocket().send(response.serilize());
+			System.out.println("room " + roomID + " is not existing");
 			return false;
 		}
 	}
@@ -87,12 +90,14 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 				users.get(username).quitRoom(room); //remove room from user
 				notifyRoomDestoried(username, roomID, room.getUserListSet());
 				rooms.remove(roomID);//remove room from rooms
+				System.out.println("user " + username + " destroied room " + roomID + " successfully");
 				return true;
 			} 		
 		}
 				
 		DestroyRoomResponse response = new DestroyRoomResponse(username, roomID, 1);
 		users.get(username).getChatSocket().send(response.serilize());
+		System.out.println("user " + username + " destroied room " + roomID + " failed");
 		return false;
 	}
 	
@@ -104,6 +109,7 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 				users.get(username).quitRoom(room); //remove room in user's hashmap
 				QuitRoomResponse response = new QuitRoomResponse(roomID, 0);
 				users.get(username).getChatSocket().send(response.serilize());
+				System.out.println("user " + username + " quit room " + roomID);
 				return true;
 			} 
 		}
@@ -116,7 +122,7 @@ public class ChatManager implements IUserListChanged, IUserDeleted {
 	public void getUserList(String roomID, ChatSocket cs) {
 		if (rooms.containsKey(roomID)) {
 			Set<String> user_list = rooms.get(roomID).getUserListSet();
-			System.out.println("roomID:" + roomID + " has " + user_list.size() + "users");
+			//System.out.println("roomID:" + roomID + " has " + user_list.size() + "users");
 			GetUserListResponse response = new GetUserListResponse(user_list, roomID);
 			cs.send(response.serilize());
 		} else {
